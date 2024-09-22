@@ -68,9 +68,9 @@ async def check_releases(mod_update_channel):
 
 @tree.command(name="addrepo", description="Add repository", guild=discord.Object(id=bot_details.guild_id))
 async def add_repo(interaction: discord.Interaction, github_username: str, github_repository: str):
-    await interaction.response.send_message("Repo {}/{}".format(github_username, github_repository))
-    """print("{}/{}: begin tracking (checks are running..)".format(github_repository, github_username))
-    interaction.response.defer()
+    # await interaction.response.send_message("Repo {}/{}".format(github_username, github_repository))
+    print("{}/{}: begin tracking (checks are running..)".format(github_repository, github_username))
+    await interaction.response.defer()
     response = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(github_repository, github_repository))
 
     if response == None:
@@ -87,7 +87,6 @@ async def add_repo(interaction: discord.Interaction, github_username: str, githu
 
         await interaction.response.send_message("Your mod is now being tracked by Mechanic Monke. Thank you!")
         print("{}/{}: begin tracking (checks are passing)".format(github_repository, github_username))
-    """
 
 @client.event
 async def on_ready():
