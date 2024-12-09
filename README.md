@@ -10,7 +10,7 @@ It is designed to be used with Gorilla Tag mods.
 
 ## Fork this repo:
 ```
-git clone https://github.com/andrewpcvr/mechanicmonke
+git clone https://github.com/naviy2000/mechanicmonke
 ```
 
 Modify ``bot_details.py``. Some information will only be retreivable with developer mode in Discord settings.
