@@ -85,8 +85,24 @@ async def add_repo(interaction: discord.Interaction, github_username: str, githu
         with open("mods.json", "w") as mods_json:
             json.dump(repos, mods_json)
 
-        await interaction.response.send_message("Your mod is now being tracked by Mechanic Monke. Thank you!")
+        await interaction.response.send_message("Your mod is now being tracked.")
         print("{}/{}: begin tracking (checks are passing)".format(github_repository, github_username))
+
+def check_for_admin(user_id: int):
+    for admin_user_id in bot_details.bot_admin_ids:
+        if admin_user_id == user_id:
+            return True
+    
+    return False
+
+@tree.command(name="stop", description="Stop the bot [admins only]", guild=discord.Object(id=bot_details.guild_id))
+async def stop():
+    if check_for_admin(interaction.user.id) == True:
+        await interaction.response.send_message("OK")
+
+        # stop the bot
+        print("Bot stopped by user with an admin ID")
+        os.exit(0)
 
 @client.event
 async def on_ready():
