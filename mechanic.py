@@ -68,25 +68,28 @@ async def check_releases(mod_update_channel):
 
 @tree.command(name="addrepo", description="Add repository", guild=discord.Object(id=bot_details.guild_id))
 async def add_repo(interaction: discord.Interaction, github_username: str, github_repository: str):
-    # await interaction.response.send_message("Repo {}/{}".format(github_username, github_repository))
-    print("{}/{}: begin tracking (checks are running..)".format(github_repository, github_username))
-    await interaction.response.defer()
-    response = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(github_repository, github_repository))
+    if bot_details.allow_add_repositories:
+        # await interaction.response.send_message("Repo {}/{}".format(github_username, github_repository))
+        print("{}/{}: begin tracking (checks are running..)".format(github_repository, github_username))
+        await interaction.response.defer()
+        response = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(github_repository, github_repository))
 
-    if response == None:
-        await interaction.command.error("{}/{}: Could not fetch releases".format(github_username, github_repository))
-        print("{}/{}: killed \"begin tracking\" (checks failed)".format(github_repository, github_username))
+        if response == None:
+            await interaction.command.error("{}/{}: Could not fetch releases".format(github_username, github_repository))
+            print("{}/{}: killed \"begin tracking\" (checks failed)".format(github_repository, github_username))
+        else:
+            with open("mods.json", "r") as mods_json:
+                repos = json.loads(mods_json.readline())
+
+            repos.append([github_username, github_repository, "v0.0.0"])
+            
+            with open("mods.json", "w") as mods_json:
+                json.dump(repos, mods_json)
+
+            await interaction.response.send_message("Your mod is now being tracked.")
+            print("{}/{}: begin tracking (checks are passing)".format(github_repository, github_username))
     else:
-        with open("mods.json", "r") as mods_json:
-            repos = json.loads(mods_json.readline())
-
-        repos.append([github_username, github_repository, "v0.0.0"])
-        
-        with open("mods.json", "w") as mods_json:
-            json.dump(repos, mods_json)
-
-        await interaction.response.send_message("Your mod is now being tracked.")
-        print("{}/{}: begin tracking (checks are passing)".format(github_repository, github_username))
+        await interaction.command.error("The /addrepo command is disabled by the bot administrators.")
 
 def check_for_admin(user_id: int):
     for admin_user_id in bot_details.bot_admin_ids:
@@ -112,7 +115,7 @@ async def on_ready():
     await tree.sync(guild=discord.Object(id=bot_details.guild_id))
     print("Synced tree")
 
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Gorilla Tag Mod Developers", url="https://discord.gg/J6WYAqgZU5"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=bot_details.bot_playing_text or "monkeying around", url=bot_details.bot_playing_url or "https://github.com/drumkitgorilla/MechanicMonke"))
 
     while True:
         print("Syncing repos")

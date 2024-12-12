@@ -7,6 +7,8 @@ mods_file = "mods.json" # Path to the mod file you want to sync with.
 
 # Bot Configuration
 bot_token = "" # Paste your bot's token here
+bot_playing_text = "monkeying around" # bot rich presence text
+bot_playing_url = "https://discord.com" # add a URL to your discord or whatever here
 
 # Command Configuration
 allow_add_repositories = True # Enables / Disables the /addrepo command.
