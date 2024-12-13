@@ -63,10 +63,6 @@ async def check_web_releases(mod_update_channel, endpoint_url):
                 )
 
                 await mod_update_channel.send(embed=embed)
-                
-                repos[index].insert(2, version)
-                repos[index].pop()
-                print("{}/{}: Version bumped to {}".format(user, repo, version))
             
             index += 1
 
