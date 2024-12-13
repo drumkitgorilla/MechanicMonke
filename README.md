@@ -5,6 +5,7 @@ It is designed to be used with Gorilla Tag mods.
 # Install
 ## Dependencies
 - ``python3``
+- ``urllib``: Part of python3 standard library
 - ``discord.py``: ``pip install discord``
 - ``requests``: ``pip install requests``
 

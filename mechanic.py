@@ -4,6 +4,7 @@ import discord
 import requests
 import time
 import json
+import urllib
 
 import bot_details
 
@@ -17,12 +18,60 @@ tree = app_commands.CommandTree(client)
 async def sync_repos():
     print("Syncing repos")
     mod_update_channel = client.get_channel(bot_details.mod_update_channel)
-    await check_releases(mod_update_channel)
+
+    if bot_details.online_tracking_url != None or bot_details.online_tracking_url != "":
+        await check_web_releases(mod_update_channel, bot_details.online_tracking_url)
+    else:
+        await check_releases(mod_update_channel)
         
     print("Synced repos")
 
+async def check_web_releases(mod_update_channel, endpoint_url):
+    with urllib.request(endpoint_url) as mods_json:
+       repos = json.loads(mods_json.readline())
+
+       if repos == None:
+            print(("Error: endpoint URL is not valid JSON: {}", endpoint_url))
+            exit(1)
+
+    index = 0
+
+    for repoc in repos:
+        user = repoc[0]
+        repo = repoc[1]
+        current_version = repoc[2]
+
+        response = requests.get("https://api.github.com/repos/{}/{}/releases/latest".format(user, repo))
+
+        if response == None:
+            print("{}/{}: Could not fetch releases".format(user, repo))
+            return
+        else:
+            version = response.json()["name"]
+
+            print("{}/{}: Current version is {}, release version is {}.".format(user, repo, current_version, version))
+
+            if current_version != version:
+                embed = discord.Embed(
+                    title="{}/{}".format(user, repo),
+                    description="""
+                    {} -> {}
+
+                    [Download](https://github.com/{}/{}/releases/latest)
+                    """.format(current_version, version, user, repo),
+                    color=0x00ff00
+                )
+
+                await mod_update_channel.send(embed=embed)
+                
+                repos[index].insert(2, version)
+                repos[index].pop()
+                print("{}/{}: Version bumped to {}".format(user, repo, version))
+            
+            index += 1
+
 async def check_releases(mod_update_channel):
-    with open("mods.json", "r") as mods_json:
+    with open(bot_details.mods_file, "r") as mods_json:
         repos = json.loads(mods_json.readline())
 
     index = 0
@@ -105,7 +154,7 @@ async def stop():
 
         # stop the bot
         print("Bot stopped by user with an admin ID")
-        os.exit(0)
+        exit(0)
 
 @client.event
 async def on_ready():
@@ -129,3 +178,4 @@ try:
     client.run(token)
 except discord.HTTPException as e:
     print("exception: {}".format(e))
+    exit(1)
