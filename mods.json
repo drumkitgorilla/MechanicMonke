@@ -1,6 +1,7 @@
 [
-    ["legoandmars", "Utilla", "Utilla v1.6.14"],
-    ["BepInEx", "BepInEx", "BepInEx 5.4.23.2"],
-    ["BzzzThe18th", "MonkeModManager", "Monke Mod Manager 2.0.3"],
-    ["drumkitgorilla", "MechanicMonke", "Mechanic Monke 1.0.0"]
+    ["legoandmars", "Utilla", "0.0.0"],
+    ["BepInEx", "BepInEx", "0.0.0"],
+    ["BzzzThe18th", "MonkeModManager", "0.0.0"],
+    ["geopcvr", "MechanicMonke", "0.0.0"],
+    ["developer9998", "GorillaShirts", "0.0.0"]
 ]
